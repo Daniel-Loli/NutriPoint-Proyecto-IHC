@@ -1,32 +1,47 @@
-import { db } from '../database/connection.database.js'
+import { db } from '../database/connection.database.js';
+import bcryptjs from 'bcryptjs';
 
-const create = async ({ email, password, username }) => {
-    const query = {
-        text: `
-        INSERT INTO users (email, password, username)
-        VALUES ($1, $2, $3)
-        RETURNING email, username, uid
-        `,
-        values: [email, password, username]
+const create = async ({ email, password, nombre, edad, peso, altura, objetivos, biografia, sexo }) => {
+    try {
+        const salt = await bcryptjs.genSalt(10);
+        const hashedPassword = await bcryptjs.hash(password, salt);
+
+        const query = {
+            text: `
+            INSERT INTO usuario (email, password, nombre, edad,sexo, peso, altura, objetivos, biografia)
+            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+            RETURNING email, nombre, id_usuario
+            `,
+            values: [email, hashedPassword, nombre, edad,sexo, peso, altura, objetivos, biografia]
+        };
+
+        const { rows } = await db.query(query);
+        return rows[0];
+    } catch (error) {
+        console.error('Error in create function:', error);
+        throw error; // Propagate the error for handling in the calling code
     }
-
-    const { rows } = await db.query(query)
-    return rows[0]
-}
+};
 
 const findOneByEmail = async (email) => {
-    const query = {
-        text: `
-        SELECT * FROM users
-        WHERE EMAIL = $1
-        `,
-        values: [email]
+    try {
+        const query = {
+            text: `
+            SELECT * FROM usuario
+            WHERE email = $1
+            `,
+            values: [email]
+        };
+
+        const { rows } = await db.query(query);
+        return rows[0];
+    } catch (error) {
+        console.error('Error in findOneByEmail function:', error);
+        throw error; // Propagate the error for handling in the calling code
     }
-    const { rows } = await db.query(query)
-    return rows[0]
-}
+};
 
 export const UserModel = {
     create,
     findOneByEmail
-}
+};

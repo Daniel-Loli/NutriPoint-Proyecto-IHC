@@ -4,23 +4,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Dashboard</title>
 </head>
 
 <body>
     <h1>Dashboard</h1>
-    <h2>Username: <span id="username"></span></h2>
     <h2>Email: <span id="email"></span></h2>
+    <h2>Nombre: <span id="nombre"></span></h2>
+    <h2>Edad: <span id="edad"></span></h2>
+    <h2>Sexo: <span id="sexo"></span></h2>
+    <h2>Peso: <span id="peso"></span></h2>
+    <h2>Altura: <span id="altura"></span></h2>
+    <h2>Objetivos: <span id="objetivos"></span></h2>
+    <h2>Biografía: <span id="biografia"></span></h2>
 
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script>
-
-        const username = document.querySelector('#username')
+        const nombre = document.querySelector("#nombre");
         const email = document.querySelector('#email')
-        const token = localStorage.getItem('token')
+        const token = localStorage.getItem('token');
 
         if (!token) {
-            window.location.href = "/login"
+            window.location.href = "/login";
         }
 
         axios.get('/api/v1/users/dashboard', {
@@ -29,10 +34,11 @@
             }
         })
             .then(({ data }) => {
-                username.textContent = data.msg.username
+                nombre.textContent = data.msg.nombre
                 email.textContent = data.msg.email
             })
-            .catch(e => console.log(e))
+            
+
     </script>
 
 </body>

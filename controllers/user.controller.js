@@ -5,10 +5,10 @@ import { UserModel } from '../models/user.model.js';
 // /api/v1/users/register
 const register = async (req, res) => {
     try {
-        const { username, email, password } = req.body;
+        const { username, email, password, nombre, edad, sexo, peso, altura, objetivos, biografia } = req.body;
 
-        if (!username || !email || !password) {
-            return res.status(400).json({ ok: false, msg: "Missing required fields: email, password, username" });
+        if (!username || !email || !password || !nombre || !edad || !sexo) {
+            return res.status(400).json({ ok: false, msg: "Missing required fields: email, password, username, nombre, edad, sexo" });
         }
 
         const user = await UserModel.findOneByEmail(email);
@@ -19,7 +19,7 @@ const register = async (req, res) => {
         const salt = await bcryptjs.genSalt(10);
         const hashedPassword = await bcryptjs.hash(password, salt);
 
-        const newUser = await UserModel.create({ email, password: hashedPassword, username });
+        const newUser = await UserModel.create({ email, password: hashedPassword, nombre, edad, sexo, peso, altura, objetivos, biografia, username });
 
         const token = jwt.sign({ email: newUser.email },
             process.env.JWT_SECRET,
@@ -77,22 +77,7 @@ const login = async (req, res) => {
     }
 };
 
-// /api/v1/users/dashboard
-const dashboard = async (req, res) => {
-    try {
-        const user = await UserModel.findOneByEmail(req.email);
-        return res.json({ ok: true, msg: user });
-    } catch (error) {
-        console.log(error);
-        return res.status(500).json({
-            ok: false,
-            msg: 'Error server'
-        });
-    }
-};
-
 export const UserController = {
     register,
-    login,
-    dashboard 
+    login
 };

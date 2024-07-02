@@ -1,19 +1,26 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Register</title>
 </head>
-
 <body>
-    <h1>Registro de Usuario</h1>
+    <h1>Register</h1>
     <form id="registerForm">
-        <input type="text" placeholder="Nombre de usuario" name="username">
-        <input type="email" placeholder="Correo electrónico" name="email">
-        <input type="password" placeholder="Contraseña" name="password">
-        <button type="submit">Registrarse</button>
+        <input type="email" placeholder="Email" name="email" required>
+        <input type="password" placeholder="Password" name="password" required>
+        <input type="text" placeholder="Nombre" name="nombre" required>
+        <input type="number" placeholder="Edad" name="edad" required>
+        <select name="sexo" required>
+            <option value="masculino">Masculino</option>
+            <option value="femenino">Femenino</option>
+        </select>
+        <input type="number" step="0.01" placeholder="Peso" name="peso">
+        <input type="number" step="0.01" placeholder="Altura" name="altura">
+        <textarea placeholder="Objetivos" name="objetivos"></textarea>
+        <textarea placeholder="Biografía" name="biografia"></textarea>
+        <button type="submit">Registrar</button>
     </form>
 
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
@@ -21,24 +28,26 @@
         const registerForm = document.querySelector('#registerForm');
         registerForm.addEventListener('submit', async (e) => {
             e.preventDefault();
-            const username = e.target.username.value;
             const email = e.target.email.value;
             const password = e.target.password.value;
+            const nombre = e.target.nombre.value;
+            const edad = e.target.edad.value;
+            const sexo = e.target.sexo.value;
+            const peso = e.target.peso.value;
+            const altura = e.target.altura.value;
+            const objetivos = e.target.objetivos.value;
+            const biografia = e.target.biografia.value;
             try {
                 const { data } = await axios.post('/api/v1/users/register', {
-                    username,
-                    email,
-                    password
+                    username: email, // Aquí podrías ajustar según cómo esté estructurado en tu backend
+                    email, password, nombre, edad, sexo, peso, altura, objetivos, biografia
                 });
-                alert('Registro exitoso. Por favor inicia sesión.');
-                window.location.href = '/login';
+                localStorage.setItem('token', data.msg);
+                window.location.href = 'dashboard';
             } catch (error) {
-                console.error('Error al registrar:', error);
-                alert('Hubo un error al registrar. Por favor intenta nuevamente.');
+                console.error('Error al registrar usuario:', error);
             }
         });
     </script>
-
 </body>
-
 </html>
